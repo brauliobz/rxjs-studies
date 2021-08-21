@@ -1,27 +1,39 @@
-import { Observable } from './rxjs.js';
+// import { Observable } from './rxjs.js';
 
-const obs = new Observable(subscriber => {
-    subscriber.next(1);
-    subscriber.next(2);
-    subscriber.next(3);
-    const timeoutId = setTimeout(
-        () => {
-            subscriber.next(4);
-            subscriber.complete();
-        },
-        1000
-    );
+// const obs = new Observable(subscriber => {
+//     subscriber.next(1);
+//     subscriber.next(2);
+//     subscriber.next(3);
+//     const timeoutId = setTimeout(
+//         () => {
+//             subscriber.next(4);
+//             subscriber.complete();
+//         },
+//         1000
+//     );
 
-    return function unsubscribe() {
-        console.log('unsubscribe');
-        clearTimeout(timeoutId);
-    }
-});
+//     return function unsubscribe() {
+//         console.log('unsubscribe');
+//         clearTimeout(timeoutId);
+//     }
+// });
 
-const subscription = obs.subscribe({
-    next: v => console.log(v),
-    error: err => console.error(err),
-    complete: () => console.log('completed')
-});
+// const subscription = obs.subscribe({
+//     next: v => console.log(v),
+//     error: err => console.error(err),
+//     complete: () => console.log('completed')
+// });
 
-subscription.unsubscribe();
+// subscription.unsubscribe();
+
+
+import { of } from './rxjs';
+import { map } from './rxjs/operators';
+
+of(1, 2, 3)
+    .pipe(map(v => v*v))
+    .subscribe({
+        next: v => console.log(v),
+        error: err => console.error(err),
+        complete: () => console.log('completed')
+    });

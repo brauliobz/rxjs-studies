@@ -1,3 +1,5 @@
+import { Operator } from "./rxjs/operators";
+
 export class Observable<T> {
 
     private subscriber: Subscriber<T>;
@@ -9,6 +11,10 @@ export class Observable<T> {
     subscribe(observer: Observer<T>): Subscription {
         const unsubscriber = this.subscriber(observer);
         return new Subscription(unsubscriber);
+    }
+
+    pipe<U>(operator: Operator<T, U>) {
+        return operator(this)
     }
 }
 
@@ -41,17 +47,20 @@ type Observer<T> = {
 };
 
 
-// functions
+// creation operators
 
 // export function fromEvent(domObj: any, eventName: string): Observable<T> {
 //     // TODO
 //     // TODO return Observable
 // }
 
-// export function of<T>(list: Array<T>): Observable<T> {
-//     // TODO
-//     // TODO return Observable
-// }
+export function of<T>(...list: T[]): Observable<T> {
+    return new Observable(subscriber => {
+        for (const value of list) {
+            subscriber.next(value);
+        }
+    });
+}
 
 // export function interval(): Observable<T> {
 //     // TODO
