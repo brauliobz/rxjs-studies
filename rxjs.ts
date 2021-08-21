@@ -13,8 +13,18 @@ export class Observable<T> {
         return new Subscription(unsubscriber);
     }
 
-    pipe<U>(operator: Operator<T, U>) {
-        return operator(this)
+    pipe<A>(operator: Operator<T, A>): Observable<A>;
+    pipe<A, B>(op1: Operator<T, A>, op2: Operator<A, B>): Observable<B>;
+    pipe(...operators: Operator<any, any>[]): Observable<any> {
+        if (operators.length == 1) {
+            return operators[0](this)
+        } else {
+            let obs: Observable<any> = this;
+            for (const op of operators) {
+                obs = op(obs);
+            }
+            return obs;
+        }
     }
 }
 
@@ -56,8 +66,16 @@ type Observer<T> = {
 
 export function of<T>(...list: T[]): Observable<T> {
     return new Observable(subscriber => {
+        let complete = false;
         for (const value of list) {
+            if (complete) {
+                break;
+            }
             subscriber.next(value);
+        }
+
+        return function unsubscribe() {
+            complete = true;
         }
     });
 }
