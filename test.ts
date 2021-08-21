@@ -28,10 +28,11 @@
 
 
 import { of } from './rxjs';
-import { map } from './rxjs/operators';
+import { first, map } from './rxjs/operators';
 
 of(1, 2, 3)
     .pipe(map(v => v*v))
+    .pipe(first())
     .subscribe({
         next: v => console.log(v),
         error: err => console.error(err),

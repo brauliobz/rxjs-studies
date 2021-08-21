@@ -18,9 +18,29 @@ export function map<T, U>(pureTransform: (value: T, index: number) => U): Operat
         return new Observable(subscriber => {
             sourceObservable.subscribe({
                 next: t => subscriber.next(pureTransform(t, index++)),
-                error: err => console.error(err),
-                complete: () => {}
+                error: err => subscriber.error(err),
+                complete: () => subscriber.complete()
             });
+        })
+    };
+}
+
+export function first<T>(): Operator<T, T> {
+    return (sourceObservable: Observable<T>) => {
+        let index = 0;
+        return new Observable(subscriber => {
+            sourceObservable.subscribe({
+                next: v => {
+                    if (index == 0) {
+                        subscriber.next(v);
+                        index++;
+                    } else {
+                        subscriber.complete();
+                    }
+                },
+                error: err => subscriber.error(err),
+                complete: () => subscriber.complete()
+            })
         })
     };
 }
